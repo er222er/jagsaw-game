@@ -1,0 +1,22 @@
+body{
+    background-color: #000 !important;
+}
+
+.plate{
+    width: 80vw;
+    height:80vw;
+    margin: auto;
+    margin-top: 10vh;
+}
+
+.patch{
+    display: inline-block;
+}
+.layer{
+    position: absolute;
+    background-color: #000;
+}
+.patch,.layer{
+    background-size: 80vw 80vw;
+    border: 1px solid white;
+}

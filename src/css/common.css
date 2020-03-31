@@ -1,0 +1,23 @@
+body {
+    margin: 0;
+    font: 14px "Microsoft Yahei", "冬青黑体简体中文 w3", "宋体";
+    background-color: #F2F2F2;
+    /* background-color: red; */
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    list-style: none;
+}
+
+p {
+    margin: 0;
+}
+
+a, a:link, a:visited, a:visited, a:active {
+    text-decoration: none;
+}
