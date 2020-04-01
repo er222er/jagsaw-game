@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDom from 'react-dom'
+import Game from './game'
 
-import Jagsaw from './component/jagsaw'
-import './css/common.css'
+
 
 
 ReactDom.render(
-    <Jagsaw />
+    <Game/>
     , document.getElementById('root'))

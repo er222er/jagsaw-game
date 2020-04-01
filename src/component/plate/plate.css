@@ -11,12 +11,6 @@ body{
 
 .patch{
     display: inline-block;
-}
-.layer{
-    position: absolute;
-    background-color: #000;
-}
-.patch,.layer{
-    background-size: 80vw 80vw;
     border: 1px solid white;
+    background-size: 80vw 80vw;
 }
