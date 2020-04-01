@@ -4,6 +4,7 @@ import './plate.css'
 
 
 const Plate = ({ patchs, handleTouchStart, handleTouchMove, handleTouchEnd }) => {
+    console.log('plate render')
     return (
         <div className='plate'>
             {

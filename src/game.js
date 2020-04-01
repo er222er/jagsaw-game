@@ -5,7 +5,7 @@ import Layer from './component/layer/Layer'
 
 var xstart, ystart,  // 点击开始位置
     layerPatch,
-    _layerStyle,        
+    _layerStyle,
     _patchs         // 碎片位置
 
 const Game = () => {
@@ -74,23 +74,59 @@ const Game = () => {
     }
 
     function handleTouchEnd() {
-        let { top: y, left: x } = _layerStyle
-        for (var patch of _patchs) {
 
-            let { top, left } = patch,
+        // 元素中间轴
+        let { top: y, left: x } = _layerStyle
+        x += _layerStyle.width / 2
+        y += _layerStyle.height / 2
+
+
+        // 移除浮层
+        setLayerStyle(null)
+        let newPatchs
+
+
+        // 交换碎片
+        for (var i = 0; i < _patchs.length; i++) {
+            let patch = _patchs[i],
+                { top, left } = patch,
                 bottom = top + patch.height,
                 right = left + patch.width
 
             if (left < x && right > x && top < y & bottom > y) {
-                // let copy = copy(patchs)
-                console.log(patch)
+
+                let  index = parseInt(layerPatch.index)
+                if(i === index){
+                    return
+                }
+
+                newPatchs = copy(patchs)
+
+                newPatchs[index].style.backgroundPosition = newPatchs[i].style.backgroundPosition
+                newPatchs[i].style.backgroundPosition = layerPatch.style.backgroundPosition
+                newPatchs[index].sort = newPatchs[i].sort
+                newPatchs[i].sort = parseInt(layerPatch.sort)
+
+                setPatchs(newPatchs)
                 break
             }
         }
+
+        // 校验排序
+        let sorted = 0
+        for (let patch of newPatchs) {
+            if(sorted !== patch.sort){
+                return
+            }
+            sorted++
+        }
+        
+
+
     }
 
 
-    useMemo(() => {
+    useMemo(() => { 
         let sort = 0,
             patchs = [],
             width = `${96 / xnum}%`, // 100 - 4个border
@@ -128,7 +164,7 @@ const Game = () => {
     }, [patchs]),
 
         layer = useMemo(() =>
-            <Layer style={layerStyle} />
+            layerStyle && <Layer style={layerStyle} />
             , [layerStyle])
 
     return (
