@@ -2,6 +2,8 @@ import React, { useState, useMemo } from 'react'
 import Plate from './component/plate/Plate'
 import Layer from './component/layer/Layer'
 
+const plateWidth = 79.4 //减去碎片边框
+
 
 var xstart, ystart,  // 点击开始位置
     layerPatch,
@@ -128,8 +130,8 @@ const Game = () => {
     useMemo(() => {
         let sort = 0,
             patchs = [],
-            width = `${96 / xnum}%`, // 100 - 4个border
-            height = `${96 / ynum}%`,
+            width = `${plateWidth / xnum}vw`, // 100 - 4个border
+            height = `${plateWidth / ynum}vw`,
             backgroundImage = `url(${url})`
 
         // 初始化碎片
@@ -141,7 +143,7 @@ const Game = () => {
                         width,
                         height,
                         backgroundImage,
-                        backgroundPosition: `${-y * 79.6 / xnum}vw ${-x * 79.6 / ynum}vw` // 80 - 0.4的border
+                        backgroundPosition: `${-y * plateWidth / xnum}vw ${-x * plateWidth / ynum}vw` // 80 - 0.4的border
                     }
                 })
                 return sort++

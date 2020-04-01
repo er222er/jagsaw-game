@@ -1,16 +1,20 @@
-body{
+body {
     background-color: #000 !important;
 }
 
-.plate{
+.plate {
     width: 80vw;
-    height:80vw;
+    height: 80vw;
     margin: auto;
     margin-top: 10vh;
+    
+    border-collapse: collapse;
 }
 
-.patch{
+.patch {
     display: inline-block;
-    border: 1px solid white;
+    border: 0.1vw solid white;
+    margin-right:-0.1vw;
+    margin-bottom:-0.1vw;
     background-size: 80vw 80vw;
 }
