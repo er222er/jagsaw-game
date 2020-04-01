@@ -10,8 +10,6 @@ var xstart, ystart,  // 点击开始位置
 
 const Game = () => {
 
-    console.log('game render')
-
     const xnum = 3, ynum = 3
     const url = "http://www.zhousb.cn/upload/jagsaw/1.jpg"
     const [level, setLevel] = useState(1)
@@ -95,15 +93,17 @@ const Game = () => {
 
             if (left < x && right > x && top < y & bottom > y) {
 
-                let  index = parseInt(layerPatch.index)
-                if(i === index){
+                let index = parseInt(layerPatch.index)
+                if (i === index) {
                     return
                 }
 
                 newPatchs = copy(patchs)
 
+
                 newPatchs[index].style.backgroundPosition = newPatchs[i].style.backgroundPosition
                 newPatchs[i].style.backgroundPosition = layerPatch.style.backgroundPosition
+
                 newPatchs[index].sort = newPatchs[i].sort
                 newPatchs[i].sort = parseInt(layerPatch.sort)
 
@@ -115,18 +115,17 @@ const Game = () => {
         // 校验排序
         let sorted = 0
         for (let patch of newPatchs) {
-            if(sorted !== patch.sort){
+            if (sorted !== patch.sort) {
                 return
             }
             sorted++
         }
-        
 
-
+        console.log('通过')
     }
 
 
-    useMemo(() => { 
+    useMemo(() => {
         let sort = 0,
             patchs = [],
             width = `${96 / xnum}%`, // 100 - 4个border
@@ -148,6 +147,9 @@ const Game = () => {
                 return sort++
             })
         )
+
+        // 打乱碎片
+        shuffle(patchs)
         setPatchs(patchs)
     }, [level])
 
@@ -177,6 +179,14 @@ const Game = () => {
 
 function copy(obj) {
     return JSON.parse(JSON.stringify(obj));
+}
+
+function shuffle(arr) {
+    let i = arr.length;
+    while (--i) {
+        let j = Math.floor(Math.random() * i);
+        [arr[j], arr[i]] = [arr[i], arr[j]];
+    }
 }
 
 
