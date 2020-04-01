@@ -1,10 +1,31 @@
 import React, { useState, useMemo } from 'react'
 import Plate from './component/plate/Plate'
 import Layer from './component/layer/Layer'
+import Timer from './component/timer/Timer'
 
-const plateWidth = 79.4 //减去碎片边框
+import './css/game.css'
+
+const plateWidth = 79.6 //减去碎片边框
 
 
+
+
+// 关卡组
+const levels = [
+    {
+        xnum: 3,
+        ynum: 3,
+        url: 'http://www.zhousb.cn/upload/jagsaw/1.jpg'
+    }, {
+        xnum: 4,
+        ynum: 4,
+        url: 'http://www.zhousb.cn/upload/jagsaw/1.jpg'
+    }
+]
+
+
+
+// 临时变量
 var xstart, ystart,  // 点击开始位置
     layerPatch,
     _layerStyle,
@@ -12,11 +33,12 @@ var xstart, ystart,  // 点击开始位置
 
 const Game = () => {
 
-    const xnum = 3, ynum = 3
-    const url = "http://www.zhousb.cn/upload/jagsaw/1.jpg"
-    const [level, setLevel] = useState(1)
-    const [layerStyle, setLayerStyle] = useState(null)
-    const [patchs, setPatchs] = useState(null)
+    const [level, setLevel] = useState(0),
+        [layerStyle, setLayerStyle] = useState(null),
+        [patchs, setPatchs] = useState(null)
+
+    // 选择关卡
+    let { xnum, ynum, url } = levels[level]
 
 
     function handleTouchStart({ target, changedTouches }) {
@@ -123,10 +145,15 @@ const Game = () => {
             sorted++
         }
 
-        console.log('通过')
+        // 通过
+        setLevel(1 + level)
+        _patchs = null
     }
 
 
+
+
+    // 初始化碎片
     useMemo(() => {
         let sort = 0,
             patchs = [],
@@ -134,7 +161,6 @@ const Game = () => {
             height = `${plateWidth / ynum}vw`,
             backgroundImage = `url(${url})`
 
-        // 初始化碎片
         Array(xnum).fill().map((xitem, x) =>
             Array(ynum).fill().map((yitem, y) => {
                 patchs.push({
@@ -151,10 +177,13 @@ const Game = () => {
         )
 
         // 打乱碎片
-        shuffle(patchs)
         setPatchs(patchs)
+        setTimeout(() => {
+            patchs = copy(patchs)
+            shuffle(patchs)
+            setPatchs(patchs)
+        }, 2000)
     }, [level])
-
 
 
 
@@ -173,15 +202,22 @@ const Game = () => {
 
     return (
         <>
+            <div className='header'>
+                <div className='level'>{1 + level} / {levels.length}</div>
+            </div>
             {plate}
             {layer}
+            <Timer/>
+           
         </>
     )
 }
 
+
 function copy(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
+
 
 function shuffle(arr) {
     let i = arr.length;

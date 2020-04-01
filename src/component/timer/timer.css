@@ -1,0 +1,27 @@
+.timer {
+    margin-top: 15vh;
+    white-space: nowrap;
+}
+
+.timer>div {
+    display: inline-block;
+}
+
+.line {
+    width: 100%;
+    height: 0.2vh;
+    background: black;
+    transition: width 2s;
+    animation-name: reduce;
+    animation-timing-function:linear;
+    animation-fill-mode:forwards;
+}
+
+@keyframes reduce {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0;
+    }
+}

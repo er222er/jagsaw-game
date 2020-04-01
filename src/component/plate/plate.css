@@ -1,19 +1,15 @@
-body {
-    background-color: #000 !important;
-}
-
 .plate {
     width: 80vw;
     height: 80vw;
     margin: auto;
-    margin-top: 10vh;
-    
+    margin-top: 15vh;
     border-collapse: collapse;
 }
 
 .patch {
     display: inline-block;
-    border: 0.1vw solid white;
+    border: 0.1vw solid rgba(255, 255, 255, .6);
+    /* 解决边框冲突 */
     margin-right:-0.1vw;
     margin-bottom:-0.1vw;
     background-size: 80vw 80vw;
