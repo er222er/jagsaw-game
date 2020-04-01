@@ -9,6 +9,8 @@ const Plate = ({ patchs, handleTouchStart, handleTouchMove, handleTouchEnd }) =>
             {
                 patchs.map((patch, index) =>
                     <div key={index}
+                        index={index}
+                        sort={patch.sort}
                         className='patch'
                         style={patch.style}
                         onTouchStart={handleTouchStart}
