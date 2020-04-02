@@ -40,8 +40,6 @@ const GameUI = ({
             {timer}
         </>
     )
-
-
 }
 
 export default GameUI

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import GameUI from './GameUI'
 
 
@@ -15,23 +15,22 @@ export const FLAG_INIT = 0,
 const levels = [
     {
         xnum: 3,
-        ynum: 3,
+        ynum: 4,
         url: 'http://www.zhousb.cn/upload/jagsaw/1.jpg',
-        seconds: 10
+        seconds: 30
     }, {
         xnum: 4,
         ynum: 4,
         url: 'http://www.zhousb.cn/upload/jagsaw/1.jpg',
-
         seconds: 25
     }
 ]
 
 
 // 临时变量
-var xstart, ystart,  // 点击开始位置
+var _flag = 0, _layerStyle,
+    xstart, ystart,  // 点击开始位置
     layerPatch,
-    _layerStyle,
     patchsField         // 碎片位置
 
 const Game = () => {
@@ -39,12 +38,12 @@ const Game = () => {
     console.log('game render')
 
     const [flag, setFlag] = useState(FLAG_INIT),
-        [level, setLevel] = useState(0),
+        [level, setLevel] = useState(1),
         [layerStyle, setLayerStyle] = useState(null),
         [patchs, setPatchs] = useState(null)
 
     // 选择关卡
-    let { xnum, ynum, url, seconds } = levels[level]
+    let { xnum, ynum, url, seconds } = levels[level - 1]
 
 
     function handleTouchStart({ target, changedTouches }) {
@@ -65,7 +64,7 @@ const Game = () => {
 
 
         // 未开始 || 只有一根手指
-        if (FLAG_START !== flag || 1 !== changedTouches.length) {
+        if (FLAG_START !== _flag || 1 !== changedTouches.length) {
             return false
         }
 
@@ -91,7 +90,7 @@ const Game = () => {
     }
 
     function handleTouchMove({ changedTouches }) {
-        if (FLAG_START !== flag || 1 !== changedTouches.length) {
+        if (FLAG_START !== _flag || 1 !== changedTouches.length) {
             return false
         }
 
@@ -104,7 +103,7 @@ const Game = () => {
 
     function handleTouchEnd() {
 
-        if (FLAG_START !== flag) {
+        if (FLAG_START !== _flag) {
             return false
         }
 
@@ -164,21 +163,31 @@ const Game = () => {
         }
 
         // 通过
-        setFlag(FLAG_INIT)
-        setLevel(1 + level)
-        patchsField = null
+        if (level == levels.length) {
+            console.log('通关')
+            syncSetFlag(FLAG_END)
+        } else {
+            syncSetFlag(FLAG_INIT)
+            setLevel(1 + level)
+            patchsField = null
+        }
+
     }
 
 
-    function overtime() {
+    const overtime = () => {
         console.log('over time')
-        setFlag(FLAG_OVER_TIME)
+        syncSetFlag(FLAG_OVER_TIME)
     }
+
+    function syncSetFlag(f) {
+        setFlag(_flag = f)
+    }
+
 
 
     useMemo(() => {
         let tmpactchs = []
-
         switch (flag) {
             case FLAG_INIT:     // 初始化拼图
 
@@ -186,16 +195,16 @@ const Game = () => {
                     width = `${plateWidth / xnum}vw`, // 100 - 4个border
                     height = `${plateWidth / ynum}vw`,
                     backgroundImage = `url(${url})`
-
-                Array(xnum).fill().map((xitem, x) =>
-                    Array(ynum).fill().map((yitem, y) => {
+                    
+                Array(ynum).fill().map((yitem, y) =>
+                    Array(xnum).fill().map((xitem, x) => {
                         tmpactchs.push({
                             sort,
                             style: {
                                 width,
                                 height,
                                 backgroundImage,
-                                backgroundPosition: `${-y * plateWidth / xnum}vw ${-x * plateWidth / ynum}vw` // 80 - 0.4的border
+                                backgroundPosition: `${-x * plateWidth / xnum}vw ${-y * plateWidth / ynum}vw` // 80 - 0.4的border
                             }
                         })
                         return sort++
@@ -203,10 +212,9 @@ const Game = () => {
                 )
 
                 setPatchs(tmpactchs)
-                setTimeout(() => {
-
-                    setFlag(FLAG_START)
-                }, 3000)
+                // setTimeout(() => {
+                //     syncSetFlag(FLAG_START)
+                // }, 3000)
                 return
 
             case FLAG_START:     // 开始游戏
@@ -221,7 +229,7 @@ const Game = () => {
 
     return (
         <GameUI
-            level={1 + level}
+            level={level}
             levelNum={levels.length}
 
 
