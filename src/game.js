@@ -15,40 +15,43 @@ const levels = [
     {
         xnum: 3,
         ynum: 3,
-        url: 'http://www.zhousb.cn/upload/jagsaw/1.jpg'
+        url: 'http://www.zhousb.cn/upload/jagsaw/1.jpg',
+        seconds: 30
     }, {
         xnum: 4,
         ynum: 4,
-        url: 'http://www.zhousb.cn/upload/jagsaw/1.jpg'
+        url: 'http://www.zhousb.cn/upload/jagsaw/1.jpg',
+
+        seconds: 25
     }
 ]
-
 
 
 // 临时变量
 var xstart, ystart,  // 点击开始位置
     layerPatch,
     _layerStyle,
-    _patchs         // 碎片位置
+    patchsField         // 碎片位置
 
 const Game = () => {
 
-    const [level, setLevel] = useState(0),
+    const [flag, setFlag] = useState(0),    // flag 0 初始化 1开始 10结束 11超时
+        [level, setLevel] = useState(0),
         [layerStyle, setLayerStyle] = useState(null),
         [patchs, setPatchs] = useState(null)
 
     // 选择关卡
-    let { xnum, ynum, url } = levels[level]
+    let { xnum, ynum, url, seconds } = levels[level]
 
 
     function handleTouchStart({ target, changedTouches }) {
 
         // 初始化碎片位置
-        if (!_patchs) {
-            _patchs = []
+        if (!patchsField) {
+            patchsField = []
             for (var patch of target.parentNode.children) {
                 let { top, left, width, height } = patch.getBoundingClientRect()
-                _patchs.push({
+                patchsField.push({
                     top,
                     left,
                     width,
@@ -109,8 +112,8 @@ const Game = () => {
 
 
         // 交换碎片
-        for (var i = 0; i < _patchs.length; i++) {
-            let patch = _patchs[i],
+        for (var i = 0; i < patchsField.length; i++) {
+            let patch = patchsField[i],
                 { top, left } = patch,
                 bottom = top + patch.height,
                 right = left + patch.width
@@ -147,48 +150,62 @@ const Game = () => {
 
         // 通过
         setLevel(1 + level)
-        _patchs = null
+        patchsField = null
+    }
+
+
+    function overtime() {
+        console.log('over time')
     }
 
 
 
-
-    // 初始化碎片
     useMemo(() => {
-        let sort = 0,
-            patchs = [],
-            width = `${plateWidth / xnum}vw`, // 100 - 4个border
-            height = `${plateWidth / ynum}vw`,
-            backgroundImage = `url(${url})`
+        let tmpactchs =[]
 
-        Array(xnum).fill().map((xitem, x) =>
-            Array(ynum).fill().map((yitem, y) => {
-                patchs.push({
-                    sort,
-                    style: {
-                        width,
-                        height,
-                        backgroundImage,
-                        backgroundPosition: `${-y * plateWidth / xnum}vw ${-x * plateWidth / ynum}vw` // 80 - 0.4的border
-                    }
+        if (0 === flag) {
+
+            // 初始化碎片
+            let sort = 0,
+                width = `${plateWidth / xnum}vw`, // 100 - 4个border
+                height = `${plateWidth / ynum}vw`,
+                backgroundImage = `url(${url})`
+
+            Array(xnum).fill().map((xitem, x) =>
+                Array(ynum).fill().map((yitem, y) => {
+                    tmpactchs.push({
+                        sort,
+                        style: {
+                            width,
+                            height,
+                            backgroundImage,
+                            backgroundPosition: `${-y * plateWidth / xnum}vw ${-x * plateWidth / ynum}vw` // 80 - 0.4的border
+                        }
+                    })
+                    return sort++
                 })
-                return sort++
-            })
-        )
+            )
 
-        // 打乱碎片
-        setPatchs(patchs)
-        setTimeout(() => {
-            patchs = copy(patchs)
-            shuffle(patchs)
-            setPatchs(patchs)
-        }, 2000)
-    }, [level])
+            setPatchs(tmpactchs)
+            setTimeout(() => {
+
+                setFlag(1)
+            }, 1000)
+        } else if (1 === flag) {
+
+            // 打乱顺序
+            tmpactchs = copy(patchs)
+            shuffle(tmpactchs)
+            setPatchs(tmpactchs)
+        }
+    }, [flag])
+
 
 
 
     const plate = useMemo(() => {
-        return (<Plate
+        return (
+        <Plate
             patchs={patchs}
             handleTouchStart={handleTouchStart}
             handleTouchMove={handleTouchMove}
@@ -207,8 +224,12 @@ const Game = () => {
             </div>
             {plate}
             {layer}
-            <Timer/>
-           
+            <Timer
+                flag={flag}
+                seconds={seconds}
+                overtime={overtime}
+            />
+
         </>
     )
 }
