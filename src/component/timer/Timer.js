@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { FLAG_START, FLAG_INIT } from '../../game'
+import { FLAG_START, FLAG_INIT } from '../game/Game'
 import './timer.css'
 
 

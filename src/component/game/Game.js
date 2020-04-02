@@ -1,9 +1,6 @@
 import React, { useState, useMemo } from 'react'
-import Plate from '../plate/Plate'
-import Layer from '../layer/Layer'
-import Timer from '../timer/Timer'
+import GameUI from './GameUI'
 
-import './game.css'
 
 const plateWidth = 79.6 //减去碎片边框
 
@@ -38,6 +35,8 @@ var xstart, ystart,  // 点击开始位置
     patchsField         // 碎片位置
 
 const Game = () => {
+
+    console.log('game render')
 
     const [flag, setFlag] = useState(FLAG_INIT),
         [level, setLevel] = useState(0),
@@ -177,7 +176,6 @@ const Game = () => {
     }
 
 
-
     useMemo(() => {
         let tmpactchs = []
 
@@ -221,36 +219,22 @@ const Game = () => {
     }, [flag])
 
 
-
-
-    const plate = useMemo(() => {
-        return (
-            <Plate
-                patchs={patchs}
-                handleTouchStart={handleTouchStart}
-                handleTouchMove={handleTouchMove}
-                handleTouchEnd={handleTouchEnd}
-            />)
-    }, [patchs]),
-
-        layer = useMemo(() =>
-            layerStyle && <Layer style={layerStyle} />
-            , [layerStyle])
-
     return (
-        <>
-            <div className='header'>
-                <div className='level'>{1 + level} / {levels.length}</div>
-            </div>
-            {plate}
-            {layer}
-            <Timer
-                flag={flag}
-                seconds={seconds}
-                overtime={overtime}
-            />
+        <GameUI
+            level={1 + level}
+            levelNum={levels.length}
 
-        </>
+
+            flag={flag}
+            seconds={seconds}
+            overtime={overtime}
+            patchs={patchs}
+
+            layerStyle={layerStyle}
+            handleTouchStart={handleTouchStart}
+            handleTouchMove={handleTouchMove}
+            handleTouchEnd={handleTouchEnd}
+        />
     )
 }
 
