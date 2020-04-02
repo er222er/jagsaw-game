@@ -1,13 +1,17 @@
 import React, { useState, useMemo } from 'react'
-import Plate from './component/plate/Plate'
-import Layer from './component/layer/Layer'
-import Timer from './component/timer/Timer'
+import Plate from '../plate/Plate'
+import Layer from '../layer/Layer'
+import Timer from '../timer/Timer'
 
-import './css/game.css'
+import './game.css'
 
 const plateWidth = 79.6 //减去碎片边框
 
 
+export const FLAG_INIT = 0,
+    FLAG_START = 1,
+    FLAG_END = 10,
+    FLAG_OVER_TIME = 11
 
 
 // 关卡组
@@ -16,7 +20,7 @@ const levels = [
         xnum: 3,
         ynum: 3,
         url: 'http://www.zhousb.cn/upload/jagsaw/1.jpg',
-        seconds: 30
+        seconds: 10
     }, {
         xnum: 4,
         ynum: 4,
@@ -35,7 +39,7 @@ var xstart, ystart,  // 点击开始位置
 
 const Game = () => {
 
-    const [flag, setFlag] = useState(0),    // flag 0 初始化 1开始 10结束 11超时
+    const [flag, setFlag] = useState(FLAG_INIT),
         [level, setLevel] = useState(0),
         [layerStyle, setLayerStyle] = useState(null),
         [patchs, setPatchs] = useState(null)
@@ -61,10 +65,11 @@ const Game = () => {
         }
 
 
-        // 只有一根手指
-        if (1 !== changedTouches.length) {
+        // 未开始 || 只有一根手指
+        if (FLAG_START !== flag || 1 !== changedTouches.length) {
             return false
         }
+
         xstart = changedTouches[0].pageX
         ystart = changedTouches[0].pageY
 
@@ -87,7 +92,7 @@ const Game = () => {
     }
 
     function handleTouchMove({ changedTouches }) {
-        if (1 !== changedTouches.length) {
+        if (FLAG_START !== flag || 1 !== changedTouches.length) {
             return false
         }
 
@@ -99,6 +104,10 @@ const Game = () => {
     }
 
     function handleTouchEnd() {
+
+        if (FLAG_START !== flag) {
+            return false
+        }
 
         // 元素中间轴
         let { top: y, left: x } = _layerStyle
@@ -139,6 +148,13 @@ const Game = () => {
             }
         }
 
+
+        // 没有交换
+        if (!newPatchs) {
+            return
+        }
+
+
         // 校验排序
         let sorted = 0
         for (let patch of newPatchs) {
@@ -149,6 +165,7 @@ const Game = () => {
         }
 
         // 通过
+        setFlag(FLAG_INIT)
         setLevel(1 + level)
         patchsField = null
     }
@@ -156,47 +173,50 @@ const Game = () => {
 
     function overtime() {
         console.log('over time')
+        setFlag(FLAG_OVER_TIME)
     }
 
 
 
     useMemo(() => {
-        let tmpactchs =[]
+        let tmpactchs = []
 
-        if (0 === flag) {
+        switch (flag) {
+            case FLAG_INIT:     // 初始化拼图
 
-            // 初始化碎片
-            let sort = 0,
-                width = `${plateWidth / xnum}vw`, // 100 - 4个border
-                height = `${plateWidth / ynum}vw`,
-                backgroundImage = `url(${url})`
+                let sort = 0,
+                    width = `${plateWidth / xnum}vw`, // 100 - 4个border
+                    height = `${plateWidth / ynum}vw`,
+                    backgroundImage = `url(${url})`
 
-            Array(xnum).fill().map((xitem, x) =>
-                Array(ynum).fill().map((yitem, y) => {
-                    tmpactchs.push({
-                        sort,
-                        style: {
-                            width,
-                            height,
-                            backgroundImage,
-                            backgroundPosition: `${-y * plateWidth / xnum}vw ${-x * plateWidth / ynum}vw` // 80 - 0.4的border
-                        }
+                Array(xnum).fill().map((xitem, x) =>
+                    Array(ynum).fill().map((yitem, y) => {
+                        tmpactchs.push({
+                            sort,
+                            style: {
+                                width,
+                                height,
+                                backgroundImage,
+                                backgroundPosition: `${-y * plateWidth / xnum}vw ${-x * plateWidth / ynum}vw` // 80 - 0.4的border
+                            }
+                        })
+                        return sort++
                     })
-                    return sort++
-                })
-            )
+                )
 
-            setPatchs(tmpactchs)
-            setTimeout(() => {
+                setPatchs(tmpactchs)
+                setTimeout(() => {
 
-                setFlag(1)
-            }, 1000)
-        } else if (1 === flag) {
+                    setFlag(FLAG_START)
+                }, 3000)
+                return
 
-            // 打乱顺序
-            tmpactchs = copy(patchs)
-            shuffle(tmpactchs)
-            setPatchs(tmpactchs)
+            case FLAG_START:     // 开始游戏
+
+                tmpactchs = copy(patchs)
+                shuffle(tmpactchs)
+                setPatchs(tmpactchs)
+                return
         }
     }, [flag])
 
@@ -205,12 +225,12 @@ const Game = () => {
 
     const plate = useMemo(() => {
         return (
-        <Plate
-            patchs={patchs}
-            handleTouchStart={handleTouchStart}
-            handleTouchMove={handleTouchMove}
-            handleTouchEnd={handleTouchEnd}
-        />)
+            <Plate
+                patchs={patchs}
+                handleTouchStart={handleTouchStart}
+                handleTouchMove={handleTouchMove}
+                handleTouchEnd={handleTouchEnd}
+            />)
     }, [patchs]),
 
         layer = useMemo(() =>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { FLAG_START, FLAG_INIT } from '../../game'
 import './timer.css'
 
 
@@ -10,7 +11,8 @@ var count,
 const Timer = ({ flag, seconds, overtime }) => {
 
     console.log('time render')
-    let [time, setTime] = useState()
+    let [time, setTime] = useState(),
+        [style, setStyle] = useState()
 
     function countDown() {
         setTime(count -= gap)
@@ -23,19 +25,28 @@ const Timer = ({ flag, seconds, overtime }) => {
 
     useEffect(() => {
         count = seconds * 1000
-        if (0 === flag) {
-            setTime(count)
-        } else if (1 === flag) {
-            clearInterval(conter)
-            conter = setInterval(countDown, gap)
+
+        switch (flag) {
+            case FLAG_INIT:
+                setTime(count)
+                setStyle({})
+                return
+            case FLAG_START:
+                clearInterval(conter)
+                conter = setInterval(countDown, gap)
+
+            default:
+                setStyle({
+                    animationName: 'reduce',
+                    animationDuration: `${seconds}s`
+                })
         }
     }, [flag])
 
+    
     return (
         <div className='timer'>
-            <div className='line'
-                style={1 !== flag ? {} :
-                    { animationName: 'reduce', animationDuration: `${seconds}s` }}></div>
+            <div className='line' style={style}></div>
             <div className='time'>{(time / 1000).toFixed(1)}s</div>
         </div>
     )

@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDom from 'react-dom'
-import Game from './game'
+import Game from './component/game/Game'
 
 import './css/common.css'
 
