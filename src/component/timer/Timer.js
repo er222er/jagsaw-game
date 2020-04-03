@@ -14,36 +14,31 @@ const Timer = ({ flag, seconds, overtime }) => {
     let [time, setTime] = useState(),
         [style, setStyle] = useState()
 
-    function countDown() {
-        setTime(count -= gap)
-        if (0 >= count) {
-            overtime()
-            clearInterval(conter)
-        }
-    }
-
-
     useEffect(() => {
         count = seconds * 1000
 
-        switch (flag) {
-            case FLAG_INIT:
-                setTime(count)
-                setStyle({})
-                return
-            case FLAG_START:
-                clearInterval(conter)
-                conter = setInterval(countDown, gap)
 
-            default:
-                setStyle({
-                    animationName: 'reduce',
-                    animationDuration: `${seconds}s`
-                })
+        if (FLAG_INIT === flag) {
+            setTime(count)
+            setStyle({})
+            return
+        } else if (FLAG_START === flag) {
+            clearInterval(conter)
+            conter = setInterval(() => {
+                setTime(count -= gap)
+                if (0 >= count) {
+                    overtime()
+                    clearInterval(conter)
+                }
+            }, gap)
         }
-    }, [flag])
+        setStyle({
+            animationName: 'reduce',
+            animationDuration: `${seconds}s`
+        })
+    }, [flag, overtime, seconds])
 
-    
+
     return (
         <div className='timer'>
             <div className='line' style={style}></div>

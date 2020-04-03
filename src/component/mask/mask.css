@@ -1,0 +1,18 @@
+#mask {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 99999;
+    background-color: rgba(0, 0, 0, .4);
+}
+
+#mask>.time {
+    text-align: center;
+    line-height: 100vh;
+    /* height: 100vh; */
+    color: #fff;
+    font-size: 2rem;
+    font-weight: bold;
+}

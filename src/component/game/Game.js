@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import GameUI from './GameUI'
+import Mask from '../mask/Mask'
 
 
 const plateWidth = 79.6 //减去碎片边框
@@ -14,8 +15,8 @@ export const FLAG_INIT = 0,
 // 关卡组
 const levels = [
     {
-        xnum: 3,
-        ynum: 4,
+        xnum: 2,
+        ynum: 2,
         url: 'http://www.zhousb.cn/upload/jagsaw/1.jpg',
         seconds: 30
     }, {
@@ -163,7 +164,7 @@ const Game = () => {
         }
 
         // 通过
-        if (level == levels.length) {
+        if (level === levels.length) {
             console.log('通关')
             syncSetFlag(FLAG_END)
         } else {
@@ -184,8 +185,6 @@ const Game = () => {
         setFlag(_flag = f)
     }
 
-
-
     useMemo(() => {
         let tmpactchs = []
         switch (flag) {
@@ -195,7 +194,7 @@ const Game = () => {
                     width = `${plateWidth / xnum}vw`, // 100 - 4个border
                     height = `${plateWidth / ynum}vw`,
                     backgroundImage = `url(${url})`
-                    
+
                 Array(ynum).fill().map((yitem, y) =>
                     Array(xnum).fill().map((xitem, x) => {
                         tmpactchs.push({
@@ -223,26 +222,36 @@ const Game = () => {
                 shuffle(tmpactchs)
                 setPatchs(tmpactchs)
                 return
+            default:
         }
     }, [flag])
 
 
-    return (
-        <GameUI
-            level={level}
-            levelNum={levels.length}
-
-
-            flag={flag}
-            seconds={seconds}
-            overtime={overtime}
-            patchs={patchs}
-
-            layerStyle={layerStyle}
-            handleTouchStart={handleTouchStart}
-            handleTouchMove={handleTouchMove}
-            handleTouchEnd={handleTouchEnd}
+    const mask = useMemo(() =>
+        _flag === FLAG_INIT && < Mask
+            hideTime={3}
+            hiddencb={() => syncSetFlag(FLAG_START)}
         />
+        , [flag])
+
+    return (
+        <>
+            {mask}
+            <GameUI
+                level={level}
+                levelNum={levels.length}
+                flag={flag}
+
+                seconds={seconds}
+                overtime={overtime}
+                patchs={patchs}
+
+                layerStyle={layerStyle}
+                handleTouchStart={handleTouchStart}
+                handleTouchMove={handleTouchMove}
+                handleTouchEnd={handleTouchEnd}
+            />
+        </>
     )
 }
 

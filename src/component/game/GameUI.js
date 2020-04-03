@@ -1,10 +1,10 @@
-import React, { useState, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import Plate from '../plate/Plate'
 import Layer from '../layer/Layer'
 import Timer from '../timer/Timer'
 import './game.css'
 
-const GameUI = ({ 
+const GameUI = ({
     level, levelNum,
     flag, seconds, overtime, patchs,
     layerStyle, handleTouchStart, handleTouchMove, handleTouchEnd }) => {
@@ -18,27 +18,29 @@ const GameUI = ({
                 handleTouchMove={handleTouchMove}
                 handleTouchEnd={handleTouchEnd}
             />)
-    }, [patchs])
+    }, [patchs, handleTouchStart, handleTouchMove, handleTouchEnd])
+
 
     const layer = useMemo(() =>
         layerStyle && <Layer style={layerStyle} />
         , [layerStyle])
 
+
     const timer = useMemo(() => <Timer
         flag={flag}
         seconds={seconds}
         overtime={overtime}
-    />, [flag])
+    />, [flag, seconds, overtime])
 
     return (
-        <>
+        <div className='warp'>
             <div className='header'>
                 <div className='level'>{level} / {levelNum}</div>
             </div>
             {plate}
             {layer}
             {timer}
-        </>
+        </div>
     )
 }
 

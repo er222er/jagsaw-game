@@ -7,7 +7,7 @@
     display: inline-block;
 }
 
-.line {
+.timer>.line {
     width: 100%;
     height: 0.2vh;
     background: black;
@@ -15,7 +15,7 @@
     animation-fill-mode:forwards;
 }
 
-.time{
+.timer>.time{
     margin-left: 1vw;
 }
 
