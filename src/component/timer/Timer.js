@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { FLAG_START, FLAG_INIT } from '../game/Game'
+import { FLAG_INIT, FLAG_START } from '../game/Game'
 import './timer.css'
 
 
@@ -17,25 +17,34 @@ const Timer = ({ flag, seconds, overtime }) => {
     useEffect(() => {
         count = seconds * 1000
 
+        console.log(`time count ${flag}`)
 
-        if (FLAG_INIT === flag) {
-            setTime(count)
-            setStyle({})
-            return
-        } else if (FLAG_START === flag) {
-            clearInterval(conter)
-            conter = setInterval(() => {
-                setTime(count -= gap)
-                if (0 >= count) {
-                    overtime()
-                    clearInterval(conter)
-                }
-            }, gap)
+
+        switch (flag) {
+            case FLAG_INIT:
+
+                setTime(count)
+                setStyle({})
+                return
+            case FLAG_START:
+                clearInterval(conter)
+                conter = setInterval(() => {
+                    setTime(count -= gap)
+                    if (0 >= count) {
+                        overtime()
+                        clearInterval(conter)
+                    }
+                }, gap)
+                setStyle({
+                    animationName: 'reduce',
+                    animationDuration: `${seconds}s`
+                })
+                return
+            default:
+                return
         }
-        setStyle({
-            animationName: 'reduce',
-            animationDuration: `${seconds}s`
-        })
+
+
     }, [flag, overtime, seconds])
 
 

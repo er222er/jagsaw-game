@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react'
 import './mask.css'
 
 
-
-const hideDuration = 1
-
 var count,
     counter
 
@@ -13,26 +10,17 @@ const Mask = ({ hideTime, hiddencb }) => {
     console.log('mask render')
 
     const [time, setTime] = useState(),
-        [style, setStyle] = useState()
+        [classes, setClasses] = useState()
 
     useEffect(() => {
         setTime(count = hideTime)
         counter = setInterval(() => {
-
             count -= 1
-
             if (0 >= count) {
                 count = 'start'
 
-                setTimeout(() => {
-                    hiddencb()
-                }, hideDuration * 1000)
-
-                setStyle({
-                    opacity: 0,
-                    transition: `opacity ${hideDuration}s`
-                })
-
+                hiddencb()
+                setClasses('hide')
                 clearInterval(counter)
             }
 
@@ -42,7 +30,7 @@ const Mask = ({ hideTime, hiddencb }) => {
     }, [hideTime, hiddencb])
 
     return (
-        <div id='mask' style={style}>
+        <div id='mask' className={`trans ${classes}`}>
             <div className='time'>{time}</div>
         </div>
     )

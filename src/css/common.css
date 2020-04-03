@@ -21,3 +21,16 @@ p {
 a, a:link, a:visited, a:visited, a:active {
     text-decoration: none;
 }
+
+.trans {
+    transition-property: opacity;
+    transition-duration: 1s;
+}
+
+.hide{
+    opacity: 0;
+}
+
+.show{
+    opacity: 1 !important;
+}

@@ -3,11 +3,13 @@ import GameUI from './GameUI'
 import Mask from '../mask/Mask'
 
 
-const plateWidth = 79.6 //减去碎片边框
+const plateWidth = 79.6, //减去碎片边框
+    hide = 'hide'
 
 
 export const FLAG_INIT = 0,
-    FLAG_START = 1,
+    FLAG_SHOW = 1,
+    FLAG_START = 2,
     FLAG_END = 10,
     FLAG_OVER_TIME = 11
 
@@ -39,6 +41,7 @@ const Game = () => {
     console.log('game render')
 
     const [flag, setFlag] = useState(FLAG_INIT),
+        [classes, setClasses] = useState(hide),
         [level, setLevel] = useState(1),
         [layerStyle, setLayerStyle] = useState(null),
         [patchs, setPatchs] = useState(null)
@@ -65,7 +68,7 @@ const Game = () => {
 
 
         // 未开始 || 只有一根手指
-        if (FLAG_START !== _flag || 1 !== changedTouches.length) {
+        if (1 !== changedTouches.length) {
             return false
         }
 
@@ -91,7 +94,7 @@ const Game = () => {
     }
 
     function handleTouchMove({ changedTouches }) {
-        if (FLAG_START !== _flag || 1 !== changedTouches.length) {
+        if (1 !== changedTouches.length) {
             return false
         }
 
@@ -103,10 +106,6 @@ const Game = () => {
     }
 
     function handleTouchEnd() {
-
-        if (FLAG_START !== _flag) {
-            return false
-        }
 
         // 元素中间轴
         let { top: y, left: x } = _layerStyle
@@ -186,51 +185,51 @@ const Game = () => {
     }
 
     useMemo(() => {
-        let tmpactchs = []
-        switch (flag) {
-            case FLAG_INIT:     // 初始化拼图
+        if (FLAG_INIT === flag) {
+            let sort = 0,
+                tmpactchs = [],
+                width = `${plateWidth / xnum}vw`, // 100 - 4个border
+                height = `${plateWidth / ynum}vw`,
+                backgroundImage = `url(${url})`
 
-                let sort = 0,
-                    width = `${plateWidth / xnum}vw`, // 100 - 4个border
-                    height = `${plateWidth / ynum}vw`,
-                    backgroundImage = `url(${url})`
-
-                Array(ynum).fill().map((yitem, y) =>
-                    Array(xnum).fill().map((xitem, x) => {
-                        tmpactchs.push({
-                            sort,
-                            style: {
-                                width,
-                                height,
-                                backgroundImage,
-                                backgroundPosition: `${-x * plateWidth / xnum}vw ${-y * plateWidth / ynum}vw` // 80 - 0.4的border
-                            }
-                        })
-                        return sort++
+            Array(ynum).fill().map((yitem, y) =>
+                Array(xnum).fill().map((xitem, x) => {
+                    tmpactchs.push({
+                        sort,
+                        style: {
+                            width,
+                            height,
+                            backgroundImage,
+                            backgroundPosition: `${-x * plateWidth / xnum}vw ${-y * plateWidth / ynum}vw` // 80 - 0.4的border
+                        }
                     })
-                )
+                    return sort++
+                })
+            )
 
-                setPatchs(tmpactchs)
-                // setTimeout(() => {
-                //     syncSetFlag(FLAG_START)
-                // }, 3000)
-                return
-
-            case FLAG_START:     // 开始游戏
-
-                tmpactchs = copy(patchs)
-                shuffle(tmpactchs)
-                setPatchs(tmpactchs)
-                return
-            default:
+            setPatchs(tmpactchs)
+            setTimeout(() => {
+                setClasses('')
+                syncSetFlag(FLAG_SHOW)
+            }, 100)
         }
     }, [flag])
 
 
     const mask = useMemo(() =>
-        _flag === FLAG_INIT && < Mask
+        flag === FLAG_SHOW && < Mask
             hideTime={3}
-            hiddencb={() => syncSetFlag(FLAG_START)}
+            hiddencb={() => {
+
+                let tmpactchs = copy(patchs)
+                shuffle(tmpactchs)
+                setPatchs(tmpactchs)
+
+                setTimeout(() => {
+                    syncSetFlag(FLAG_START)
+                }, 1000)
+
+            }}
         />
         , [flag])
 
@@ -241,6 +240,7 @@ const Game = () => {
                 level={level}
                 levelNum={levels.length}
                 flag={flag}
+                classes={classes}
 
                 seconds={seconds}
                 overtime={overtime}

@@ -5,8 +5,8 @@ import Timer from '../timer/Timer'
 import './game.css'
 
 const GameUI = ({
-    level, levelNum,
-    flag, seconds, overtime, patchs,
+    level, levelNum, flag,  classes,
+    seconds, overtime, patchs,
     layerStyle, handleTouchStart, handleTouchMove, handleTouchEnd }) => {
 
     console.log('gameui render')
@@ -18,7 +18,7 @@ const GameUI = ({
                 handleTouchMove={handleTouchMove}
                 handleTouchEnd={handleTouchEnd}
             />)
-    }, [patchs, handleTouchStart, handleTouchMove, handleTouchEnd])
+    }, [patchs])
 
 
     const layer = useMemo(() =>
@@ -33,7 +33,7 @@ const GameUI = ({
     />, [flag, seconds, overtime])
 
     return (
-        <div className='warp'>
+        <div className={`warp trans ${classes}`}>
             <div className='header'>
                 <div className='level'>{level} / {levelNum}</div>
             </div>
