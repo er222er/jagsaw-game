@@ -45,7 +45,7 @@ const Timer = ({ flag, seconds, overtime }) => {
         }
 
 
-    }, [flag, overtime, seconds])
+    }, [flag,  seconds])
 
 
     return (

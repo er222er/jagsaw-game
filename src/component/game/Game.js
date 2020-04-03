@@ -7,6 +7,7 @@ const plateWidth = 79.6, //减去碎片边框
     hide = 'hide'
 
 
+
 export const FLAG_INIT = 0,
     FLAG_SHOW = 1,
     FLAG_START = 2,
@@ -18,9 +19,9 @@ export const FLAG_INIT = 0,
 const levels = [
     {
         xnum: 2,
-        ynum: 2,
+        ynum: 1,
         url: 'http://www.zhousb.cn/upload/jagsaw/1.jpg',
-        seconds: 30
+        seconds: 1000
     }, {
         xnum: 4,
         ynum: 4,
@@ -32,9 +33,10 @@ const levels = [
 
 // 临时变量
 var _flag = 0, _layerStyle,
-    xstart, ystart,  // 点击开始位置
+    xstart, ystart,     // 点击开始位置
     layerPatch,
-    patchsField         // 碎片位置
+    patchsField,        // 碎片位置
+    transDuration = 100 // 过渡时间
 
 const Game = () => {
 
@@ -50,7 +52,10 @@ const Game = () => {
     let { xnum, ynum, url, seconds } = levels[level - 1]
 
 
-    function handleTouchStart({ target, changedTouches }) {
+    function handleTouchStart(e) {
+        e.preventDefault()
+
+        const { target, changedTouches } = e
 
         // 初始化碎片位置
         if (!patchsField) {
@@ -68,7 +73,7 @@ const Game = () => {
 
 
         // 未开始 || 只有一根手指
-        if (1 !== changedTouches.length) {
+        if (FLAG_START !== _flag || 1 !== changedTouches.length) {
             return false
         }
 
@@ -93,8 +98,13 @@ const Game = () => {
         setLayerStyle(_layerStyle)
     }
 
-    function handleTouchMove({ changedTouches }) {
-        if (1 !== changedTouches.length) {
+    function handleTouchMove(e) {
+
+        e.preventDefault()
+
+        const { changedTouches } = e
+
+        if (FLAG_START !== _flag || 1 !== changedTouches.length) {
             return false
         }
 
@@ -105,7 +115,12 @@ const Game = () => {
         setLayerStyle(_layerStyle)
     }
 
-    function handleTouchEnd() {
+    function handleTouchEnd(e) {
+        e.preventDefault()
+
+        if (FLAG_START !== _flag) {
+            return false
+        }
 
         // 元素中间轴
         let { top: y, left: x } = _layerStyle
@@ -167,9 +182,13 @@ const Game = () => {
             console.log('通关')
             syncSetFlag(FLAG_END)
         } else {
-            syncSetFlag(FLAG_INIT)
-            setLevel(1 + level)
+            transDuration = 1000
             patchsField = null
+            setClasses(hide)
+            setTimeout(() => {
+                setLevel(1 + level)
+                syncSetFlag(FLAG_INIT)
+            }, transDuration)
         }
 
     }
@@ -177,6 +196,7 @@ const Game = () => {
 
     const overtime = () => {
         console.log('over time')
+        setLayerStyle(null)
         syncSetFlag(FLAG_OVER_TIME)
     }
 
@@ -211,7 +231,7 @@ const Game = () => {
             setTimeout(() => {
                 setClasses('')
                 syncSetFlag(FLAG_SHOW)
-            }, 100)
+            }, transDuration)
         }
     }, [flag])
 

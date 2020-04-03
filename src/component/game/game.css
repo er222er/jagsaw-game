@@ -1,4 +1,5 @@
 .warp{
+    position: relative;
     overflow: hidden;
 }
 

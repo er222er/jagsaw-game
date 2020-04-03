@@ -25,12 +25,10 @@ a, a:link, a:visited, a:visited, a:active {
 .trans {
     transition-property: opacity;
     transition-duration: 1s;
+    transition-timing-function :ease-in;
 }
 
 .hide{
     opacity: 0;
 }
 
-.show{
-    opacity: 1 !important;
-}
