@@ -51,9 +51,10 @@ const Game = () => {
     // 选择关卡
     let { xnum, ynum, url, seconds } = levels[level - 1]
 
+    
+
 
     function handleTouchStart(e) {
-        e.preventDefault()
 
         const { target, changedTouches } = e
 
@@ -100,7 +101,6 @@ const Game = () => {
 
     function handleTouchMove(e) {
 
-        e.preventDefault()
 
         const { changedTouches } = e
 
@@ -116,7 +116,6 @@ const Game = () => {
     }
 
     function handleTouchEnd(e) {
-        e.preventDefault()
 
         if (FLAG_START !== _flag) {
             return false

@@ -5,7 +5,7 @@ import Timer from '../timer/Timer'
 import './game.css'
 
 const GameUI = ({
-    level, levelNum, flag,  classes,
+    level, levelNum, flag, classes,
     seconds, overtime, patchs,
     layerStyle, handleTouchStart, handleTouchMove, handleTouchEnd }) => {
 
