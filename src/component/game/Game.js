@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import GameUI from './GameUI'
 import Mask from '../mask/Mask'
 
@@ -51,7 +51,7 @@ const Game = () => {
     // 选择关卡
     let { xnum, ynum, url, seconds } = levels[level - 1]
 
-    
+
 
 
     function handleTouchStart(e) {
@@ -203,6 +203,7 @@ const Game = () => {
         setFlag(_flag = f)
     }
 
+
     useMemo(() => {
         if (FLAG_INIT === flag) {
             let sort = 0,
@@ -251,6 +252,12 @@ const Game = () => {
             }}
         />
         , [flag])
+
+    useEffect(() => {
+
+        // 阻止浏览默认样式
+        document.addEventListener("touchstart", (e) => e.preventDefault(), { passive: false });
+    }, [])
 
     return (
         <>
