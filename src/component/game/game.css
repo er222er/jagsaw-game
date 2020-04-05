@@ -1,10 +1,6 @@
-.warp{
-    position: relative;
-    overflow: hidden;
-}
 
 .header {
-    margin: 10vh 5vw 0;
+    margin-top: 15%;
 }
 
 .level {

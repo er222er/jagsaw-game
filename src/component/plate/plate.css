@@ -2,7 +2,7 @@
     width: 80vw;
     height: 80vw;
     margin: auto;
-    margin-top: 15vh;
+    margin-top: 30%;
     border-collapse: collapse;
 }
 
@@ -10,7 +10,7 @@
     display: inline-block;
     border: 0.1vw solid rgba(255, 255, 255, .6);
     /* 解决边框冲突 */
-    margin-right:-0.1vw;
-    margin-bottom:-0.1vw;
+    margin-right: -0.1vw;
+    margin-bottom: -0.1vw;
     background-size: 80vw 80vw;
 }

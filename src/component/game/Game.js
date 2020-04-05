@@ -255,7 +255,7 @@ const Game = () => {
 
     useEffect(() => {
 
-        // 阻止浏览默认样式
+        // 阻止浏览默认
         document.addEventListener("touchstart", (e) => e.preventDefault(), { passive: false });
     }, [])
 
