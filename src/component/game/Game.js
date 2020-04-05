@@ -8,7 +8,9 @@ const plateWidth = 79.6, //减去碎片边框
 
 
 
-export const FLAG_INIT = 0,
+export const
+    FLAG_MIXTUS = -1,
+    FLAG_INIT = 0,
     FLAG_SHOW = 1,
     FLAG_START = 2,
     FLAG_END = 10,
@@ -57,6 +59,13 @@ const Game = () => {
     function handleTouchStart(e) {
 
         const { target, changedTouches } = e
+        
+        // 未开始 || 只有一根手指
+        if (FLAG_START !== _flag || 1 !== changedTouches.length) {
+            return false
+        }
+
+
 
         // 初始化碎片位置
         if (!patchsField) {
@@ -73,10 +82,6 @@ const Game = () => {
         }
 
 
-        // 未开始 || 只有一根手指
-        if (FLAG_START !== _flag || 1 !== changedTouches.length) {
-            return false
-        }
 
         xstart = changedTouches[0].pageX
         ystart = changedTouches[0].pageY
@@ -181,8 +186,9 @@ const Game = () => {
             console.log('通关')
             syncSetFlag(FLAG_END)
         } else {
-            transDuration = 1000
             patchsField = null
+            _flag = FLAG_MIXTUS
+            transDuration = 1000
             setClasses(hide)
             setTimeout(() => {
                 setLevel(1 + level)
