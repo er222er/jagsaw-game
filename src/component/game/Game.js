@@ -6,8 +6,6 @@ import Mask from '../mask/Mask'
 const plateWidth = 79.6, //减去碎片边框
     hide = 'hide'
 
-
-
 export const
     FLAG_MIXTUS = -1,
     FLAG_INIT = 0,
@@ -54,17 +52,14 @@ const Game = () => {
     let { xnum, ynum, url, seconds } = levels[level - 1]
 
 
-
-
     function handleTouchStart(e) {
 
         const { target, changedTouches } = e
-        
+
         // 未开始 || 只有一根手指
         if (FLAG_START !== _flag || 1 !== changedTouches.length) {
             return false
         }
-
 
 
         // 初始化碎片位置
@@ -80,7 +75,6 @@ const Game = () => {
                 })
             }
         }
-
 
 
         xstart = changedTouches[0].pageX
@@ -104,10 +98,7 @@ const Game = () => {
         setLayerStyle(_layerStyle)
     }
 
-    function handleTouchMove(e) {
-
-
-        const { changedTouches } = e
+    function handleTouchMove({ changedTouches }) {
 
         if (FLAG_START !== _flag || 1 !== changedTouches.length) {
             return false
@@ -134,8 +125,9 @@ const Game = () => {
 
         // 移除浮层
         setLayerStyle(null)
-        let newPatchs
+        
 
+        let newPatchs
 
         // 交换碎片
         for (var i = 0; i < patchsField.length; i++) {
@@ -165,7 +157,6 @@ const Game = () => {
             }
         }
 
-
         // 没有交换
         if (!newPatchs) {
             return
@@ -175,10 +166,9 @@ const Game = () => {
         // 校验排序
         let sorted = 0
         for (let patch of newPatchs) {
-            if (sorted !== patch.sort) {
+            if (sorted++ !== patch.sort) {
                 return
             }
-            sorted++
         }
 
         // 通过
@@ -210,6 +200,7 @@ const Game = () => {
     }
 
 
+    // 1.初始化
     useMemo(() => {
         if (FLAG_INIT === flag) {
             let sort = 0,
@@ -242,6 +233,8 @@ const Game = () => {
     }, [flag])
 
 
+
+    // 2.显示
     const mask = useMemo(() =>
         flag === FLAG_SHOW && < Mask
             hideTime={3}
@@ -254,10 +247,11 @@ const Game = () => {
                 setTimeout(() => {
                     syncSetFlag(FLAG_START)
                 }, 1000)
-
             }}
         />
         , [flag])
+
+
 
     useEffect(() => {
 
